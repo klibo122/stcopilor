@@ -576,6 +576,10 @@ export async function callGenerate(session, settings, pendingText, onChunk) {
                 if (reqBody.request_image_resolution === '') { delete reqBody.request_image_resolution; changed = true; }
                 if (reqBody.request_image_aspect_ratio === '') { delete reqBody.request_image_aspect_ratio; changed = true; }
 
+                // ST appends ':online' to the model when web search is enabled, which non-OpenRouter APIs reject
+                if (reqBody.enable_web_search !== undefined) { delete reqBody.enable_web_search; changed = true; }
+                if (typeof reqBody.model === 'string' && reqBody.model.endsWith(':online')) { reqBody.model = reqBody.model.slice(0, -':online'.length); changed = true; }
+
                 if (reqBody.chat_completion_source === 'zai' || (typeof reqBody.model === 'string' && reqBody.model.toLowerCase().includes('glm'))) {
                     if (reqBody.reasoning_effort !== undefined) { delete reqBody.reasoning_effort; changed = true; }
                     if (reqBody.reasoning !== undefined) { delete reqBody.reasoning; changed = true; }
