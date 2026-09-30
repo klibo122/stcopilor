@@ -16337,7 +16337,8 @@ window.onerror=function(m){window.parent.postMessage({type:'scp-iframe-err',msg:
       if (match) exports.__extPath = match[1];
   } else {
       for (let s of document.getElementsByTagName('script')) {
-          if (s.src && s.src.includes('index.js') && s.src.toLowerCase().includes('copilot')) {
+          // Accept both the upstream folder name (ST-Copilot) and this fork's (stcopilor)
+          if (s.src && s.src.includes('index.js') && /copilo[tr]/.test(s.src.toLowerCase())) {
               const match = new URL(s.src).pathname.match(/\/scripts\/extensions\/(.+)\/[^\/]+\.js$/);
               if (match) { exports.__extPath = match[1]; break; }
           }
