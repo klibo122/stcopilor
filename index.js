@@ -14473,6 +14473,14 @@ window.onerror=function(m){window.parent.postMessage({type:'scp-iframe-err',msg:
                   if (reqBody.enable_web_search !== undefined) { delete reqBody.enable_web_search; changed = true; }
                   if (typeof reqBody.model === 'string' && reqBody.model.endsWith(':online')) { reqBody.model = reqBody.model.slice(0, -':online'.length); changed = true; }
 
+                  // Profiles saved without a model send none; fall back to the model selected for the main chat
+                  if (!reqBody.model && requestUrl.includes('/chat-completions/')) {
+                      const oai = ctx.chatCompletionSettings || window.oai_settings || ctx.oai_settings || {};
+                      const source = reqBody.chat_completion_source || oai.chat_completion_source;
+                      const liveModel = source ? oai[`${source}_model`] : undefined;
+                      if (liveModel) { reqBody.model = liveModel; changed = true; }
+                  }
+
                   if (reqBody.chat_completion_source === 'zai' || (typeof reqBody.model === 'string' && reqBody.model.toLowerCase().includes('glm'))) {
                       if (reqBody.reasoning_effort !== undefined) { delete reqBody.reasoning_effort; changed = true; }
                       if (reqBody.reasoning !== undefined) { delete reqBody.reasoning; changed = true; }
